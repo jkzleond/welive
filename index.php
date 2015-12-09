@@ -14,7 +14,6 @@ if($userinfo['usergroupid'] == 1){
 	header("Location: admin.home.php");
 	exit();
 }
-
 //添加快速回复短语, 默认显示40条
 $getmsgs = $DB->query("SELECT msg FROM " . TABLE_PREFIX . "automsg WHERE activated =1 ORDER BY ordernum ASC LIMIT 40");
 $automsgs = ''; 
@@ -58,7 +57,7 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.or
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>' . SITE_TITLE . '</title>
 <script type="text/javascript" src="includes/javascript/Ajax.js"></script>
-<script type="text/javascript" src="includes/javascript/Support.js"></script>
+<script type="text/javascript" src="includes/javascript/SupportDecoded.js"></script>
 <script type="text/javascript" src="includes/javascript/x-win.js"></script>
 <link rel="stylesheet" type="text/css" href="templates/support.css">
 <link rel="shortcut icon" href="favicon.ico" />

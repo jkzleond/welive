@@ -22,5 +22,4 @@ if (strstr($script_name, $thisfiledirname.'/')){
 
 define('BASEURL', $weliveURL);
 
-
 ?>

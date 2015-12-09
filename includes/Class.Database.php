@@ -32,8 +32,8 @@ class MySQL{
 		$this->printerror = $printerror;
 		$this->conn = $pconnect ? @mysql_pconnect($dbhost, $dbuser, $dbpassword) : @mysql_connect($dbhost, $dbuser, $dbpassword, true);
 
-		if (!$this->conn)	{
-			$this->error('Connect database failed! The dbuser, dbpassoword or dbhost not correct.');
+		if (!$this->conn){
+			$this->error('Connect database failed! The dbuser, dbpassword or dbhost not correct.');
 		}
 
 		$dbVersion = @mysql_get_server_info($this->conn);
@@ -174,6 +174,140 @@ class MySQL{
 			$message .= $msg."\r\n\r\n";
 			$message .= "Error: ". $error_desc ."\r\n";
 			$message .= "Error No: ".$errno."\r\n";
+			$message .= "File: ". $_SERVER['PHP_SELF'] . "\r\n";
+
+			echo '<center><br /><br /><br /><br /><b>Database Query Error Info</b><br /><textarea rows="22" style="width:480px;font-size:12px;">'.$message.'</textarea></center>';
+
+			exit();
+		}
+	}
+}
+
+class MSSQLPDO
+{
+	var $dbname = ''; //保存当前数据库名, 用于多数据操作时回选上一个数据库为当前数据库
+	var $dbcharset = 'utf8';
+	var $insert_id = 0; //insert|replace语句最后插入的id
+	var $query_nums = 0; //总计查询次数
+	var $result_nums = 0; //查询结果数或查询影响的记录数
+	var $printerror = true; //是否打印查询错误信息
+	var $errno = 0; //数据库访问错误代码
+	var $pdo = null; //原生PDO对象
+	var $pdo_statement = null; //原生PDOStatement对象
+
+	public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $pconnect=false, $printerror=true)
+	{
+		$this->pdo = new \PDO('dblib:host='.$dbhost.';dbname='.$dbname.';charset='.$this->dbcharset, $dbuser, $dbpassword);
+	}
+
+	public function exe($sql, $bind=null)
+	{
+		$this->query_nums++;
+
+		$this->pdo_statement = $this->pdo->prepare($sql);
+
+		if(!empty($bind))
+		{
+			foreach($bind as $key => $value)
+			{
+				$this->pdo_statement->bindValue(':'.$key, $value);
+			}
+		}
+
+		$this->pdo_statement->execute();
+
+		if($this->pdo_statement->errorCode() != '0000')
+		{
+			$this->error('DATABASE ERROR');
+		}
+
+		if (preg_match("/^(insert|replace)\s+/i", $sql)){
+			$this->insert_id = $this->pdo->lastInserId();
+		}
+
+		$this->result_nums = $this->pdo_statement->rowCount();
+
+		$this->pdo_statement->closeCursor();
+
+		return $this->result_nums; //返回影响的行数
+	}
+
+	public function query($sql, $bind=null, $fetch_mode = PDO::FETCH_ASSOC)
+	{
+		$this->query_nums++;
+
+		$this->pdo_statement = $this->pdo->prepare($sql);
+
+		if(!empty($bind))
+		{
+			foreach($bind as $key => $value)
+			{
+				$this->pdo_statement->bindValue(':'.$key, $value);
+			}
+		}
+
+		$this->pdo_statement->execute();
+
+		if($this->pdo_statement->errorCode() != '0000')
+		{
+			$this->error('DATABASE ERROR');
+		}
+
+		$this->pdo_statement->setFetchMode($fetch_mode);
+		$result =  $this->pdo_statement->fetchAll();
+		$this->pdo_statement->closeCursor();
+		return $result;
+	}
+
+	public function fetchOne($sql, $bind=null, $fetch_mode = PDO::FETCH_OBJ)
+	{
+		$this->query_nums++;
+
+		$this->pdo_statement = $this->pdo->prepare($sql);
+
+		if(!empty($bind))
+		{
+			foreach($bind as $key => $value)
+			{
+				$this->pdo_statement->bindValue(':'.$key, $value);
+			}
+		}
+
+		$this->pdo_statement->execute();
+
+		if($this->pdo_statement->errorCode() != '0000')
+		{
+			$this->error('DATABASE ERROR');
+		}
+
+		$this->pdo_statement->setFetchMode($fetch_mode);
+		$result = $this->pdo_statement->fetch();
+		$this->pdo_statement->closeCursor();
+		return $result;
+	}
+
+	public function getFields()
+	{
+		return $this->pdo_statement->cloumnCount();
+	}
+
+	public function insert_id()
+	{
+		return $this->insert_id;
+	}
+
+	public function geterrno()
+	{
+		return $this->pdo_statement->errorCode();
+	}
+
+	public function error($msg)
+	{
+		if($this->printerror){
+			$message  = "Database Query Error Info:\r\n\r\n";
+			$message .= $msg."\r\n\r\n";
+			$message .= "Error: ". $this->pdo_statement->errorInfo() ."\r\n";
+			$message .= "Error No: ".$this->pdo_statement->errorCode()."\r\n";
 			$message .= "File: ". $_SERVER['PHP_SELF'] . "\r\n";
 
 			echo '<center><br /><br /><br /><br /><b>Database Query Error Info</b><br /><textarea rows="22" style="width:480px;font-size:12px;">'.$message.'</textarea></center>';

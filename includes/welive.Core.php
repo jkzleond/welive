@@ -20,6 +20,7 @@ if(defined('AJAX')){
 }
 
 $DB = new MySQL($dbusername, $dbpassword, $dbname,  $servername, true, $printerror);
+$CM_DB = new MSSQLPDO($cm_db_username, $cm_db_password, $cm_db_name, $cm_db_host, true, $printerror);
 
 $dbpassword   = ''; //将config.php文件中的密码付值为空, 增加安全性
 
@@ -35,14 +36,12 @@ define('COPYRIGHT', '&copy; '.date("Y") .' <a href="'.APP_URL.'" target="_blank"
 
 if(defined('AUTH')){ //客服和管理员只显示中文, 且需要授权
 	include(BASEPATH . 'includes/welive.Support.php');
-
 	define('IS_CHINESE', 1);
 	define('SITE_TITLE', $_CFG['cTitle']);
 	@include(BASEPATH . 'languages/Chinese.php');
 	if(!defined('AJAX')){ //客服的AJAX操作无需授权
 		include(BASEPATH.'includes/welive.Auth.php');
 	}
-
 }elseif($_CFG['cActived']){ //客人自动选择语言
 	include(BASEPATH . 'includes/welive.Functions.php');
 
@@ -65,6 +64,5 @@ if(defined('AUTH')){ //客服和管理员只显示中文, 且需要授权
 	define('SITE_TITLE', Iif(IS_CHINESE, $_CFG['cTitle'], $_CFG['cTitle_en']));
 	@include(BASEPATH . 'languages/' . SITE_LANG . '.php');
 }
-
 
 ?>
