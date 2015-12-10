@@ -153,8 +153,8 @@ function CreateSession($userid){
 
 	$DB->exe("INSERT INTO " . TABLE_PREFIX . "session (sessionid, userid, ipaddress, created)
 			  VALUES ('$sessionid', '$userid', '$userip', '$timenow') ");
-	$DB->exe("UPDATE " . TABLE_PREFIX . "user SET lastlogin = '$timenow' WHERE userid = '$userid' ");
-	$DB->exe("DELETE FROM " . TABLE_PREFIX . "guest WHERE created < " . ($timenow - 3600*24));
+	$DB->exe("UPDATE " . TABLE_PREFIX . "user SET lastlogin = '$timenow', last_request = '$timenow' WHERE userid = '$userid' ");
+	//$DB->exe("DELETE FROM " . TABLE_PREFIX . "guest WHERE created < " . ($timenow - 3600*24));
 
 	$deletehistory = ForceInt($_CFG['cDeleteHistory']);
 

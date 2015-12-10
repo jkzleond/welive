@@ -7,14 +7,19 @@ header_nocache();
 
 if($_CFG['cActived'])
 {
-	$online_cache_file = BASEPATH.'cache/online_cache.php';
+	$kickout_time = time() - $_CFG['cAutoOffline'];
 
-	@include($online_cache_file);
+	//踢掉长时间未请求的客服
+	$DB->exe("UPDATE ".TABLE_PREFIX."user SET isonline = 0 WHERE last_request < $kickout_time");
+	
+	//$online_cache_file = BASEPATH.'cache/online_cache.php';
 
-	if(!isset($welive_onlines) OR !is_array($welive_onlines)){
+	//@include($online_cache_file);
+
+	//if(!isset($welive_onlines) OR !is_array($welive_onlines)){
 		$welive_onlines = storeCache();
-		if(!$welive_onlines) die('Save cache failed!');
-	}
+		//if(!$welive_onlines) die('Save cache failed!');
+	//}
 
 	$from_url = base64_encode($_SERVER['HTTP_REFERER']);
 	$cm_user_id = isset($_GET['userId']) ? $_GET['userId'] : '';

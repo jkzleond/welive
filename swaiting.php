@@ -32,6 +32,9 @@ $lastlogin = Iif($lastlogin, $lastlogin-3600, $realtime - 3600*12);
 $guests = '';
 $msgs = '';
 
+//记录客服最后请求时间
+$DB->exe("UPDATE ".TABLE_PREFIX."user SET last_request = '$realtime' WHERE userid = '$uid'");
+
 $getguests = $DB->query("SELECT guestid, guestip, browser, lang, isonline, isbanned, fromurl, cm_user_id FROM " . TABLE_PREFIX . "guest WHERE serverid = '$uid' AND created > $lastlogin 
 	ORDER BY created ASC");
 

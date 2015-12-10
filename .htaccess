@@ -1,0 +1,6 @@
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^chat\.html$ client_chat.php [QSA,L]
+</IfModule>
