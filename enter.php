@@ -11,6 +11,7 @@ include('includes/welive.Core.php');
 header_nocache();
 
 $uid = ForceIncomingInt('uid');
+$cm_user_id = $_GET['cm_user_id'];
 $vvckey = ForceIncomingString('vvckey');
 $code = authcode(base64_decode($_GET['code']), 'DECODE', $vvckey);
 $fromurl = base64_decode(ForceIncomingString('url'));
@@ -35,9 +36,10 @@ if(!$uid OR !$code OR !$vvckey){
 
 	if(!$user['userid'] OR $code !== COOKIE_KEY . $user['userid']){
 		$error = $lang['er_verify'];
-	}elseif(!$user['isonline']){
+	}/*elseif(!$user['isonline']){
+		//选择的客服不在线时
 		$error = $lang['er_uoffline'];
-	}else{
+	}*/else{
 		$transfer_uid = checkbusy($uid); //这里判断是否需要转接到其他客服
 		if($transfer_uid){
 			$sql = "SELECT u.* FROM " . TABLE_PREFIX . "user u
@@ -86,14 +88,14 @@ $realtime = time();
 $offline_time = ForceInt($_CFG['cAutoOffline']);
 $offline_time = Iif($offline_time, $offline_time, 10);
 
-if($gid){
-	$guest = $DB->getOne("SELECT guestid FROM " . TABLE_PREFIX . "guest WHERE guestid  = '$gid'");
+if($cm_user_id){
+	$guest = $DB->getOne("SELECT guestid FROM " . TABLE_PREFIX . "guest WHERE cm_user_id = '$cm_user_id'");
 }
-
-if(!$gid OR !$guest['guestid']){
+$gid = $guest['guestid'];
+if(!$gid){
 	$userAgent = get_userAgent($_SERVER['HTTP_USER_AGENT']);
 
-	$DB->exe("INSERT INTO " . TABLE_PREFIX . "guest (guestip, browser, lang, created, isonline, isbanned, serverid, fromurl) VALUES ('".GetIP()."', '$userAgent', '".IS_CHINESE."', '$realtime', 0, 0, '$uid', '$fromurl')");
+	$DB->exe("INSERT INTO " . TABLE_PREFIX . "guest (guestip, browser, lang, created, isonline, isbanned, serverid, fromurl, cm_user_id) VALUES ('".GetIP()."', '$userAgent', '".IS_CHINESE."', '$realtime', 0, 0, '$uid', '$fromurl', '$cm_user_id')");
 
 	$gid = $DB->insert_id();
 	setcookie('weliveGID'.COOKIE_KEY, $gid, ($realtime+60*60*24), "/");
@@ -101,9 +103,21 @@ if(!$gid OR !$guest['guestid']){
 	$DB->exe("UPDATE " . TABLE_PREFIX . "guest SET fromurl = '$fromurl' WHERE guestid = '$gid'");
 }
 
+$cm_user = $CM_DB->fetchOne('SELECT top 1 userId as user_id, uname as user_name, nickname as nick_name FROM IAM_USER WHERE userId = :cm_user_id', array(
+	'cm_user_id' => $cm_user_id
+));
+
+if(empty($cm_user))
+{
+	echo '非车友惠用户不可使用客服系统';
+	exit();
+}
+
+$nick_name = !empty($cm_user->nick_name) ? $cm_user->nick_name : ( !empty($cm_user->user_name) ? $cm_user->user_name : $cm_user->user_id );
+
 setcookie('weliveG'.COOKIE_KEY, md5($gid.WEBSITE_KEY.$uid.$_CFG['cKillRobotCode']), 0, "/");         //用于AJAX验证
 $ajaxpending = 'uid=' . $uid . '&gid=' . $gid;        //用于将客服ID和客人ID附加到AJAX URL
-$welcome_info = preg_replace('/\/\/1/i', '<span class=spec>'.$gid.'</span>', $lang['welcome']);
+$welcome_info = preg_replace('/\/\/1/i', '<span class=spec>'.$nick_name.'</span>', $lang['welcome']);
 
 $smilies = ''; //添加表情图标
 for($i = 0; $i < 24; $i++){

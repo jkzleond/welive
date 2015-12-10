@@ -565,6 +565,7 @@ function welive_output(data){
 		if(!aguest[1])continue;
 		isonline=aguest[4];
 		gid=aguest[0];
+		nick_name = aguest[7];
 		if(isonline==1){
 			onlines+=1;
 			row=$('g'+gid);
@@ -572,7 +573,7 @@ function welive_output(data){
 				row=document.createElement("tr");
 				row.setAttribute("id","g"+gid);
 				cell=document.createElement("td");
-				cell.innerHTML='<a href="javascript:;" hidefocus="true" onclick="openwin('+gid+', \''+guestname+gid+'\');return false;" title="打开对话窗口">'+guestname+gid+'</a> (<span id="new'+gid+'">0</span>)';
+				cell.innerHTML='<a href="javascript:;" hidefocus="true" onclick="openwin('+gid+', \''+nick_name+'\');return false;" title="打开对话窗口">'+nick_name+'</a> (<span id="new'+gid+'">0</span>)';
 				cell.className='first';
 				row.appendChild(cell);
 				cell=document.createElement("td");

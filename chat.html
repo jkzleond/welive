@@ -8,7 +8,15 @@
 	<a id="entrance_link" href="client_chat.php" style="display:none">entrance</a>
 </body>
 <script type="text/javascript">
-	var link = document.getElementById('entrance_link');
-	link.click();
+
+	if(!/[\?&]userId=.*/.test(window.location.href))
+	{
+		document.write('非法登录');
+	}
+	else
+	{
+		var url_param = window.location.href.replace(/.*\?/, '');
+		window.location.replace('client_chat.php?' + url_param);
+	}
 </script>
 </html>

@@ -32,17 +32,30 @@ $lastlogin = Iif($lastlogin, $lastlogin-3600, $realtime - 3600*12);
 $guests = '';
 $msgs = '';
 
-$getguests = $DB->query("SELECT guestid, guestip, browser, lang, isonline, isbanned, fromurl FROM " . TABLE_PREFIX . "guest WHERE serverid = '$uid' AND created > $lastlogin ORDER BY created ASC");
+$getguests = $DB->query("SELECT guestid, guestip, browser, lang, isonline, isbanned, fromurl, cm_user_id FROM " . TABLE_PREFIX . "guest WHERE serverid = '$uid' AND created > $lastlogin 
+	ORDER BY created ASC");
 
 while($guest=$DB->fetch($getguests)){
-	$guests .= $guest['guestid'] .'|||'.$guest['guestip'] .'|||'.$guest['browser'] .'|||'.$guest['lang'] .'|||'.$guest['isonline'] .'|||'.$guest['isbanned'] .'|||'.$guest['fromurl'] .'^^^';
+	$guests .= $guest['guestid'] .'|||'.$guest['guestip'] .'|||'.$guest['browser'] .'|||'.$guest['lang'] .'|||'.$guest['isonline'] .'|||'.$guest['isbanned'] .'|||'.$guest['fromurl'].'|||'.$guest['cm_user_id'] .'^^^';
 }
 
-$getmsgs = $DB->query("SELECT fromid, msg, biu, color FROM " . TABLE_PREFIX . "msg WHERE toid = '$uid' AND type = 0 AND (created + minitime) > $ajax_last ORDER BY msgid ASC");
+$getmsgs = $DB->query("SELECT msgid, fromid, msg, biu, color FROM " . TABLE_PREFIX . "msg WHERE toid = '$uid' AND type = 0 AND (created + minitime) > $ajax_last 
+	OR (is_read = 0 and type = 0)
+	ORDER BY msgid ASC");
+
+$msg_ids = '';
 
 while($msg = $DB->fetch($getmsgs)){
+	$msg_ids .= $msg['msgid'].',';
 	$msgs .= $msg['fromid'] . '|||2|||'.html($msg['msg']) .'|||2|||'.$msg['biu'] .'|||'.$msg['color'] .'^^^';
 }
+
+if(!empty($msg_ids))
+{
+	$msg_ids = rtrim($msg_ids, ',');
+	$DB->exe('UPDATE '.TABLE_PREFIX.'msg SET is_read = 1 WHERE msgid IN ('.$msg_ids.')');
+}
+
 
 if($gid AND $act == 'sending'){ //发表信息
 	$ajaxline = ForceIncomingString('ajaxline');

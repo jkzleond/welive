@@ -17,6 +17,7 @@ if($_CFG['cActived'])
 	}
 
 	$from_url = base64_encode($_SERVER['HTTP_REFERER']);
+	$cm_user_id = isset($_GET['userId']) ? $_GET['userId'] : '';
 
 	$online_users = array();
 	$offline_users = array();
@@ -59,14 +60,14 @@ if($_CFG['cActived'])
 		die('系统没有添加客服');
 	}
 
-	if($selected_user['isonline'])
-	{
-		$location_url = BASEURL.'enter.php?uid='.$rand_key.'&code='.$code.'&vvckey='.$vvckey.'&url='.$from_url;
-	}
+	/*if($selected_user['isonline'])
+	{*/
+	$location_url = BASEURL.'enter.php?uid='.$rand_key.'&code='.$code.'&vvckey='.$vvckey.'&url='.$from_url.'&cm_user_id='.$cm_user_id;
+	/*}
 	else
 	{
-		$location_url = BASEURL.'comment.php?uid='.$rand_key.'&code='.$code.'&vvckey='.$vvckey;
-	}
+		$location_url = BASEURL.'comment.php?uid='.$rand_key.'&code='.$code.'&vvckey='.$vvckey.'&cm_user_id='.$cm_user_id;
+	}*/
 
 	header('Location:'.$location_url);
 }
