@@ -51,8 +51,8 @@ $js_var = "pagetitle=\"".SITE_TITLE."\",soundon=\"$lang[soundon]\",soundoff=\"$l
 $x_win_content = '<div class="guest"><div class="guest_top"><div class="ico_history"><img src="'.TURL.'images/history.gif"></div><div id="history_guestid" class="history"></div></div><div class="guest_tools"><div id="colors_guestid" class="colors_div" style="display:none">'.$color_squares.'</div><div id="smilies_guestid" class="smilies_div" style="display:none">'.$smilies.'</div><div id="tools_sound_guestid" class="tools_sound_on" onmouseover="chClassname(this, \\\'sound\\\');chSoundTitle(this);" onclick="toggleTools(guestid, \\\'sound\\\');"></div><div id="tools_smile_guestid" class="tools_smile_off" onclick="showSmilies(guestid, 0);" onmouseover="showSmilies(guestid);" title="'.$lang['smilies'].'"></div><div id="tools_color_guestid" class="tools_color_off" onclick="showColors(guestid, 0);" onmouseover="showColors(guestid);" title="'.$lang['fontcolor'].'"></div><div id="tools_bold_guestid" class="tools_bold_off" onmouseover="chClassname(this, \\\'bold\\\');" onclick="toggleTools(guestid, \\\'bold\\\');" title="'.$lang['bold'].'"></div><div id="tools_italic_guestid" class="tools_italic_off" onmouseover="chClassname(this, \\\'italic\\\');" onclick="toggleTools(guestid, \\\'italic\\\');" title="'.$lang['italic'].'"></div><div id="tools_underline_guestid" class="tools_underline_off" onmouseover="chClassname(this, \\\'underline\\\');" onclick="toggleTools(guestid, \\\'underline\\\');" title="'.$lang['underline'].'"></div><div id="tools_reset_guestid" class="tools_reset_off" onmouseover="chClassname(this, \\\'reset\\\');" onclick="ResetInput(guestid);" title="'.$lang['reset'].'"></div><div id="tools_msg_guestid" class="tools_msg_off" onmouseover="chClassname(this, \\\'msg\\\');" onclick="showMsgs(guestid, 0);"></div></div><div class="guest_bottom"><div class="ico_message"><img src="'.TURL. 'images/message.gif"></div><div class="message_div"><textarea id="message_guestid" class="message"></textarea></div><div class="tools_send_div"><div class="tools_send" onmouseover="chClassname(this, \\\'send\\\');" onclick="sending(guestid);return false;">发送</div></div></div></div>';
 
 
-echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+echo '<!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>' . SITE_TITLE . '</title>
@@ -105,8 +105,9 @@ var seconds=0, minutes=0, hours =0, guest=new Array();
 var sys_status=1, ajaxpending = "'. $ajaxpending .'",'. $js_var .';
 var lock = 0, tt = 0, ttt = 0, tttt = 0, ttttt = 0, msgId = 0, flashtitle_step = 0, allow_sound=1, response_tout = 0, ajax_last = 0, ajaxB="0", ajaxI="0", ajaxU="0", ajaxC="0";
 var refresh_time = "'. $_CFG['cUpdate'] .'";
-var sound=\'<object data="'. TURL .'sound.swf" type="application/x-shockwave-flash" width="1" height="1" style="visibility:hidden"><param name="movie" value="'. TURL .'sound.swf" /><param name="menu" value="false" /><param name="quality" value="high" /></object>\';
-var x_win_content =\''.$x_win_content.'\';
+/*var sound=\'<object data="'. TURL .'sound.swf" type="application/x-shockwave-flash" width="1" height="1" style="visibility:hidden"><param name="movie" value="'. TURL .'sound.swf" /><param name="menu" value="false" /><param name="quality" value="high" /></object>\';
+var x_win_content =\''.$x_win_content.'\';*/
+var sound = \'<audio src="'.TURL.'sound.mp3"></audio>\';
 
 _attachEvent(window, "load", timer_start, document);
 window.onbeforeunload=function(event){return " ";};
