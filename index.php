@@ -105,8 +105,8 @@ var seconds=0, minutes=0, hours =0, guest=new Array();
 var sys_status=1, ajaxpending = "'. $ajaxpending .'",'. $js_var .';
 var lock = 0, tt = 0, ttt = 0, tttt = 0, ttttt = 0, msgId = 0, flashtitle_step = 0, allow_sound=1, response_tout = 0, ajax_last = 0, ajaxB="0", ajaxI="0", ajaxU="0", ajaxC="0";
 var refresh_time = "'. $_CFG['cUpdate'] .'";
-/*var sound=\'<object data="'. TURL .'sound.swf" type="application/x-shockwave-flash" width="1" height="1" style="visibility:hidden"><param name="movie" value="'. TURL .'sound.swf" /><param name="menu" value="false" /><param name="quality" value="high" /></object>\';
-var x_win_content =\''.$x_win_content.'\';*/
+//var sound=\'<object data="'. TURL .'sound.swf" type="application/x-shockwave-flash" width="1" height="1" style="visibility:hidden"><param name="movie" value="'. TURL .'sound.swf" /><param name="menu" value="false" /><param name="quality" value="high" /></object>\';
+var x_win_content =\''.$x_win_content.'\';
 var sound = \'<audio src="'.TURL.'sound.mp3" autoplay="true"></audio>\';
 
 _attachEvent(window, "load", timer_start, document);
